@@ -20,7 +20,7 @@ import (
 	"net"
 	"sort"
 
-	"github.com/fatedier/kcp-go"
+	"github.com/mrb4haa/SDIP-KCP"
 )
 
 func Dial(addr string, opts ...DialOption) (c net.Conn, err error) {
