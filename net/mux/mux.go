@@ -1,4 +1,4 @@
-// Copyright 2018 fatedier, fatedier@gmail.com
+// Copyright 2018 SDIP, mr.b4haa@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fatedier/golib/errors"
-	gnet "github.com/fatedier/golib/net"
+	"github.com/mrb4haa/SDIP-Libs/errors"
+	gnet "github.com/mrb4haa/SDIP-Libs/net"
 )
 
 const (
@@ -39,7 +39,6 @@ type Mux struct {
 	// sorted by priority
 	lns             []*listener
 	maxNeedBytesNum uint32
-	keepAlive       time.Duration
 
 	mu sync.RWMutex
 }
@@ -50,10 +49,6 @@ func NewMux(ln net.Listener) (mux *Mux) {
 		lns: make([]*listener, 0),
 	}
 	return
-}
-
-func (mux *Mux) SetKeepAlive(keepAlive time.Duration) {
-	mux.keepAlive = keepAlive
 }
 
 // priority
@@ -155,7 +150,6 @@ func (mux *Mux) Serve() error {
 		if err != nil {
 			return err
 		}
-		tempDelay = 0
 
 		go mux.handleConn(conn)
 	}
@@ -167,12 +161,6 @@ func (mux *Mux) handleConn(conn net.Conn) {
 	lns := mux.lns
 	defaultLn := mux.defaultLn
 	mux.mu.RUnlock()
-
-	if mux.keepAlive != 0 {
-		if tcpConn, ok := conn.(*net.TCPConn); ok {
-			tcpConn.SetKeepAlivePeriod(mux.keepAlive)
-		}
-	}
 
 	sharedConn, rd := gnet.NewSharedConnSize(conn, int(maxNeedBytesNum))
 	data := make([]byte, maxNeedBytesNum)
