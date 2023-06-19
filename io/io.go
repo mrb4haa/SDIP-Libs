@@ -18,8 +18,8 @@ import (
 	"io"
 	"sync"
 
-	"github.com/fatedier/golib/crypto"
-	"github.com/fatedier/golib/pool"
+	"github.com/mrb4haa/SDIP-Libs/crypto"
+	"github.com/mrb4haa/SDIP-Libs/pool"
 )
 
 // Join two io.ReadWriteCloser and do some operations.

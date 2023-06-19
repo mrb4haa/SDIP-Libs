@@ -22,8 +22,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fatedier/golib/errors"
-	gnet "github.com/fatedier/golib/net"
+	"github.com/mrb4haa/SDIP-Libs/errors"
+	gnet "github.com/mrb4haa/SDIP-Libs/net"
 )
 
 const (

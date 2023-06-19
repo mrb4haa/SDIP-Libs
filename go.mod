@@ -1,4 +1,4 @@
-module github.com/fatedier/golib
+module github.com/mrb4haa/SDIP-Libs
 
 go 1.20
 
