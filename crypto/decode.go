@@ -1,4 +1,4 @@
-// Copyright 2017 SDIP, mr.b4haa@gmail.com
+// Copyright 2017 fatedier, fatedier@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/sha1"
+	"fmt"
 	"io"
 
 	"golang.org/x/crypto/pbkdf2"
@@ -72,4 +73,25 @@ func (r *Reader) Read(p []byte) (nRet int, errRet error) {
 		r.err = errRet
 	}
 	return
+}
+
+// decode bytes by aes cfb
+func Decode(s, key []byte) ([]byte, error) {
+	key = pbkdf2.Key(key, []byte(DefaultSalt), 64, aes.BlockSize, sha1.New)
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(s) < aes.BlockSize {
+		return nil, fmt.Errorf("ciphertext too short")
+	}
+
+	iv := s[:aes.BlockSize]
+	s = s[aes.BlockSize:]
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+	stream.XORKeyStream(s, s)
+	return s, nil
 }

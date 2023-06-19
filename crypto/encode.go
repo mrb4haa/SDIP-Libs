@@ -1,4 +1,4 @@
-// Copyright 2017 SDIP, mr.b4haa@gmail.com
+// Copyright 2017 fatedier, fatedier@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,4 +86,24 @@ func (w *Writer) Write(p []byte) (nRet int, errRet error) {
 		w.err = errRet
 	}
 	return
+}
+
+func Encode(s, key []byte) ([]byte, error) {
+	key = pbkdf2.Key(key, []byte(DefaultSalt), 64, aes.BlockSize, sha1.New)
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	ciphertext := make([]byte, aes.BlockSize+len(s))
+	// random iv
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return nil, err
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], s)
+	return ciphertext, nil
 }
